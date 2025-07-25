@@ -13,7 +13,7 @@ let accessToken = '';
 // [1] 인증 URL 안내
 app.get('/', (req, res) => {
   const { CLIENT_ID, SITE_CODE, REDIRECT_URI } = process.env;
-  const authURL = `https://openapi.imweb.me/oauth2/authorize?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=product:read&site_code=${SITE_CODE}`;
+  const authURL = `https://openapi.imweb.me/oauth2/authorize?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=site-info:write%20product:read%20product:write&site_code=${SITE_CODE}`;
   res.send(`<a href="${authURL}">아임웹 인증하기</a>`);
 });
 
