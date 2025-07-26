@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
   const scope = 'site-info:write product:read';
 
   // ✅ redirect_uri는 인코딩하지 않음
-  const authURL = `https://openapi.imweb.me/oauth2/authorize?response_type=code&clientId=${CLIENT_ID}&redirectUri=${REDIRECT_URI}&scope=${encodeURIComponent(scope)}&siteCode=${SITE_CODE}`;
+  const authURL = `https://openapi.imweb.me/oauth2/authorize?responseType=code&clientId=${CLIENT_ID}&redirectUri=${REDIRECT_URI}&scope=${encodeURIComponent(scope)}&siteCode=${SITE_CODE}`;
 
   res.send(`<a href="${authURL}">아임웹 인증하기</a>`);
 });
