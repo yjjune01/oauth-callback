@@ -104,6 +104,9 @@ app.get('/products', async (req, res) => {
     res.status(500).json({ error: '상품 목록 불러오기 실패' });
   }
 });
+app.get('/token', (req, res) => {
+  res.send(`현재 저장된 accessToken: ${accessToken}`);
+});
 
 const PORT = process.env.port || 3000;
 app.listen(PORT, () => {
