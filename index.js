@@ -12,11 +12,11 @@ let accessToken = '';
 // [1] 인증 URL 생성
 app.get('/', (req, res) => {
   const { clientId, siteCode, redirectUri } = process.env;
-  const scope = 'site-info:write product:read';
+  const scope = 'site-info:write product:read';  // ✅ 필요한 권한만 포함
 
-  const authURL = `https://openapi.imweb.me/oauth2/authorize?responseType=code&clientId=${clientId}&redirectUri=${redirectUri}&scope=${encodeURIComponent(scope)}&siteCode=${siteCode}`;
+  const authUrl = `https://openapi.imweb.me/oauth2/authorize?responseType=code&clientId=${clientId}&redirectUri=${redirectUri}&scope=${encodeURIComponent(scope)}&siteCode=${siteCode}`;
 
-  res.send(`<a href="${authURL}">아임웹 인증하기</a>`);
+  res.send(`<a href="${authUrl}">아임웹 인증하기</a>`);
 });
 
 // [2] Callback: 토큰 발급
@@ -50,7 +50,7 @@ app.get('/oauth/callback', async (req, res) => {
   }
 });
 
-// [3] 상품 재고 확인 (JSONP)
+// [3] 상품 재고 조회 (JSONP 지원)
 app.get('/stock', async (req, res) => {
   const prodNo = req.query.prodNo;
   const callback = req.query.callback || 'callback';
@@ -62,7 +62,7 @@ app.get('/stock', async (req, res) => {
 
   try {
     const response = await axios.get(
-      `https://api.imweb.me/v2/shop/products/${prodNo}?siteCode=${process.env.siteCode}`,
+      `https://api.imweb.me/v2/shop/products/${prodNo}?site_code=${process.env.siteCode}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`
@@ -76,9 +76,32 @@ app.get('/stock', async (req, res) => {
     res.type('text/javascript');
     res.send(`${callback}(${JSON.stringify({ stock, total })})`);
   } catch (err) {
-    console.error(err.response?.data || err);
+    console.error('❌ 재고 불러오기 실패:', err.response?.data || err);
     res.type('text/javascript');
     res.send(`${callback}({ error: '재고 불러오기 실패' })`);
+  }
+});
+
+// [4] 상품 목록 조회 (테스트용)
+app.get('/products', async (req, res) => {
+  if (!accessToken) {
+    return res.status(401).json({ error: 'Access token is missing' });
+  }
+
+  try {
+    const response = await axios.get(
+      `https://api.imweb.me/v2/shop/products?siteCode=${process.env.siteCode}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }
+    );
+
+    res.json(response.data);
+  } catch (err) {
+    console.error('❌ 상품 목록 불러오기 실패:', err.response?.data || err);
+    res.status(500).json({ error: '상품 목록 불러오기 실패' });
   }
 });
 
