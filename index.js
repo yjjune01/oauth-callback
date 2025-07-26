@@ -7,23 +7,17 @@ const app = express();
 dotenv.config();
 app.use(cors());
 
+// 임시 저장용 (Access Token 저장)
 let accessToken = '';
 
-// [1] 인증 URL 생성
+// [1] 인증 URL 안내
 app.get('/', (req, res) => {
   const { CLIENT_ID, SITE_CODE, REDIRECT_URI } = process.env;
-  const scope = encodeURIComponent('site-info:write product:read product:write');
-
-  // ✅ redirect_uri는 인코딩하지 않음
-  const authURL = `https://openapi.imweb.me/oauth2/authorize?responseType=code&clientId=${CLIENT_ID}&redirectUri=${REDIRECT_URI}&scope=${scope}&siteCode=${SITE_CODE}`;
-  
-  res.send(`
-    <h1>🔐 아임웹 인증 테스트</h1>
-    <a href="${authURL}">👉 아임웹 인증하기</a>
-  `);
+  const authURL = `https://openapi.imweb.me/oauth2/authorize?responseType=code&clientId=${CLIENT_ID}&redirectUri=${encodeURIComponent(REDIRECT_URI)}&scope=product:read%20site-info:read&siteCode=${SITE_CODE}`;
+  res.send(`<a href="${authURL}">아임웹 인증하기</a>`);
 });
 
-// [2] 아임웹 인가 코드 수신 후 → Access Token 요청
+// [2] 아임웹 redirect_uri → access_token 발급
 app.get('/oauth/callback', async (req, res) => {
   const code = req.query.code;
   if (!code) return res.send('❌ 인가 코드 없음');
@@ -43,15 +37,14 @@ app.get('/oauth/callback', async (req, res) => {
     });
 
     accessToken = response.data.access_token;
-    console.log('✅ Access Token:', accessToken);
     res.send('✅ Access Token 저장 완료');
   } catch (err) {
-    console.error('❌ 토큰 발급 실패:', err.response?.data || err);
-    res.send('❌ 토큰 발급 실패: ' + JSON.stringify(err.response?.data || err));
+    console.error(err.response?.data || err);
+    res.send(`❌ 토큰 발급 실패: ${JSON.stringify(err.response?.data || err.message)}`);
   }
 });
 
-// [3] 재고 정보 제공 (JSONP)
+// [3] 상품 재고 조회 API (JSONP 지원)
 app.get('/stock', async (req, res) => {
   const prodNo = req.query.prodNo;
   const callback = req.query.callback || 'callback';
@@ -74,12 +67,12 @@ app.get('/stock', async (req, res) => {
     res.type('text/javascript');
     res.send(`${callback}(${JSON.stringify({ stock, total })})`);
   } catch (err) {
-    console.error('❌ 재고 요청 실패:', err.response?.data || err);
+    console.error(err.response?.data || err);
     res.type('text/javascript');
     res.send(`${callback}({ error: '재고 불러오기 실패' })`);
   }
 });
 
 app.listen(process.env.PORT || 3000, () => {
-  console.log(`🚀 서버 실행 중: http://localhost:${process.env.PORT || 3000}`);
+  console.log(`서버 실행 중: http://localhost:${process.env.PORT || 3000}`);
 });
