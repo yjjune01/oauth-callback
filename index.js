@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
   // ✅ scope는 반드시 site-info:write 포함
   const scope = encodeURIComponent('site-info:write product:read product:write');
 
-  const authURL = `https://openapi.imweb.me/oauth2/authorize?ResponseType=code&ClientId=${CLIENT_ID}&RedirectUri=${encodeURIComponent(REDIRECT_URI)}&Scope=${scope}&SiteCode=${SITE_CODE}`;
+  const authURL = `https://openapi.imweb.me/oauth2/authorize?responseType=code&clientId=${CLIENT_ID}&redirectUri=${encodeURIComponent(REDIRECT_URI)}&scope=${scope}&siteCode=${SITE_CODE}`;
 
   res.send(`<a href="${authURL}">아임웹 인증하기</a>`);
 });
