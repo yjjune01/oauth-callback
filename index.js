@@ -26,7 +26,7 @@ app.get('/oauth/callback', async (req, res) => {
 
   try {
     const payload = new URLSearchParams();
-    payload.append('grantType', 'authorizationCode');
+    payload.append('grantType', 'authorization_code');
     payload.append('code', code);
     payload.append('clientId', process.env.clientId);
     payload.append('clientSecret', process.env.clientSecret);
