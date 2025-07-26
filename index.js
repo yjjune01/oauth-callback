@@ -43,6 +43,7 @@ app.get('/oauth/callback', async (req, res) => {
     );
 
     accessToken = response.data.access_token;
+    console.log(accessToken)
     res.send('✅ Access Token 저장 완료');
   } catch (err) {
     console.error('❌ 토큰 발급 실패:', err.response?.data || err);
