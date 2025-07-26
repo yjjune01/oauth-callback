@@ -11,11 +11,10 @@ let accessToken = '';
 
 // [1] 인증 URL 생성
 app.get('/', (req, res) => {
-  const { CLIENT_ID, SITE_CODE, REDIRECT_URI } = process.env;
+  const { clientId, siteCode, redirectUri } = process.env;
   const scope = 'site-info:write product:read';
 
-  // ✅ redirect_uri는 인코딩하지 않음
-  const authURL = `https://openapi.imweb.me/oauth2/authorize?responseType=code&clientId=${CLIENT_ID}&redirectUri=${REDIRECT_URI}&scope=${encodeURIComponent(scope)}&siteCode=${SITE_CODE}`;
+  const authURL = `https://openapi.imweb.me/oauth2/authorize?responseType=code&clientId=${clientId}&redirectUri=${redirectUri}&scope=${encodeURIComponent(scope)}&siteCode=${siteCode}`;
 
   res.send(`<a href="${authURL}">아임웹 인증하기</a>`);
 });
@@ -27,11 +26,11 @@ app.get('/oauth/callback', async (req, res) => {
 
   try {
     const payload = new URLSearchParams();
-    payload.append('grant_type', 'authorization_code');
+    payload.append('grantType', 'authorization_code');
     payload.append('code', code);
-    payload.append('client_id', process.env.CLIENT_ID);
-    payload.append('client_secret', process.env.CLIENT_SECRET);
-    payload.append('redirect_uri', process.env.REDIRECT_URI);
+    payload.append('clientId', process.env.clientId);
+    payload.append('clientSecret', process.env.clientSecret);
+    payload.append('redirectUri', process.env.redirectUri);
 
     const response = await axios.post(
       'https://openapi.imweb.me/oauth2/token',
@@ -63,7 +62,7 @@ app.get('/stock', async (req, res) => {
 
   try {
     const response = await axios.get(
-      `https://api.imweb.me/v2/shop/products/${prodNo}?site_code=${process.env.SITE_CODE}`,
+      `https://api.imweb.me/v2/shop/products/${prodNo}?site_code=${process.env.siteCode}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`
@@ -83,7 +82,7 @@ app.get('/stock', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.port || 3000;
 app.listen(PORT, () => {
   console.log(`✅ 서버 실행 중: http://localhost:${PORT}`);
 });
