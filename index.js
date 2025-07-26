@@ -62,7 +62,7 @@ app.get('/stock', async (req, res) => {
 
   try {
     const response = await axios.get(
-      `https://api.imweb.me/v2/shop/products/${prodNo}?site_code=${process.env.siteCode}`,
+      `https://api.imweb.me/v2/shop/products/${prodNo}?siteCode=${process.env.siteCode}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`
