@@ -32,6 +32,11 @@ app.get('/oauth/callback', async (req, res) => {
     payload.append('clientSecret', process.env.clientSecret);
     payload.append('redirectUri', process.env.redirectUri);
 
+    console.log("📌 code:", code);
+console.log("📌 client_id:", process.env.clientId);
+console.log("📌 client_secret:", process.env.clientSecret);
+console.log("📌 redirect_uri:", process.env.redirectUri);
+
     const response = await axios.post(
       'https://openapi.imweb.me/oauth2/token',
       payload.toString(),
