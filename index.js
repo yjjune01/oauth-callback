@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
   const { CLIENT_ID, SITE_CODE, REDIRECT_URI } = process.env;
 
   // ✅ scope는 반드시 site-info:write 포함
-  const scope = encodeURIComponent('site-info:write product:read product:write');
+  const scope = encodeURIComponent('site-info:write product:read');
 
   const authURL = `https://openapi.imweb.me/oauth2/authorize?responseType=code&clientId=${CLIENT_ID}&redirectUri=${encodeURIComponent(REDIRECT_URI)}&scope=${scope}&siteCode=${SITE_CODE}`;
 
