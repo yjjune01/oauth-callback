@@ -27,6 +27,8 @@ app.get('/', (req, res) => {
 // [2] 아임웹 redirect_uri → access_token 발급
 app.get('/oauth/callback', async (req, res) => {
   const code = req.query.code;
+  console.log('code',code)
+  console.log('req.query', req.query)
   if (!code) return res.send('❌ 인가 코드 없음');
 
   try {
